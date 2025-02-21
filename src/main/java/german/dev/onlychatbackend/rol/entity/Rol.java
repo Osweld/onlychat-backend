@@ -28,4 +28,10 @@ public class Rol {
     public String getRole() {
         return name.startsWith("ROLE_") ? name : "ROLE_" + name;
     }
+
+    public Rol(Long id) {
+        this.id = id;
+    }
+
+    
 }
