@@ -22,6 +22,10 @@ public class Rol {
 
     @NotBlank(message = "The rol is required")
     @Size(min = 4, max = 25, message = "The rol must be between 4 and 25 characters")
-    @Column(name = "name",nullable = false, length = 25)
+    @Column(name = "name",nullable = false, length = 25, unique = true)
     private String name;
+
+    public String getRole() {
+        return name.startsWith("ROLE_") ? name : "ROLE_" + name;
+    }
 }
