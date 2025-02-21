@@ -25,4 +25,13 @@ public class UserStatus {
     @Size(min=5, max = 25, message = "The Status name must be between 5 and 25 characters")
     @Column(name = "name", nullable = false, length = 25, unique = true)
     private String name;
+
+    public UserStatus(Long id) {
+        this.id = id;
+    }
+
+
+    
 }
+
+
