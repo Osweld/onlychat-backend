@@ -3,11 +3,19 @@ package german.dev.onlychatbackend.user.entity;
 import german.dev.onlychatbackend.rol.entity.Rol;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -43,5 +51,11 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "id_user_status", nullable = false)
     private UserStatus userStatus;
+
+
+    @PrePersist
+    protected void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 
 }
