@@ -3,6 +3,7 @@ package german.dev.onlychatbackend.rol.controller;
 import german.dev.onlychatbackend.rol.entity.Rol;
 import german.dev.onlychatbackend.rol.service.RolService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ public class RolController {
     }
 
     @GetMapping()
+    @Secured("ROLE_ADMIN")
     ResponseEntity<List<Rol>> getAllRoles() {
         return ResponseEntity.ok(rolService.findAll());
     }
