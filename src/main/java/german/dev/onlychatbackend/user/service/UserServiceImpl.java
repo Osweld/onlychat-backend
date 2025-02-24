@@ -2,6 +2,7 @@ package german.dev.onlychatbackend.user.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +23,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -58,6 +61,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(userRequestDTO);
         user.setRol(new Rol(Long.valueOf(RolEnum.USER.getId())));
         user.setUserStatus(new UserStatus(Long.valueOf(UserStatusEnum.INACTIVE.getId())));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userMapper.toDto(userRepository.save(user));
     }
 
