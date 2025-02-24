@@ -1,11 +1,15 @@
-package german.dev.onlychatbackend.user.dto;
+package german.dev.onlychatbackend.auth.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class UserRequestDTO {
-    @NotBlank(message = "The username is required")
+public class SignUpRequestDTO {
+    
+@NotBlank(message = "The username is required")
     @Size(min=5, max = 20, message = "The username must be between 5 and 20 characters")
     private String username;
 
@@ -18,3 +22,5 @@ public class UserRequestDTO {
             flags = Pattern.Flag.CASE_INSENSITIVE, message = "Invalid email format")
     private String email;
 }
+
+

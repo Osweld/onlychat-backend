@@ -51,4 +51,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         " FROM User u JOIN u.rol r JOIN u.userStatus us")
         Page<UserProjection> findAllUsers(Pageable pageable);
 
+
+        Boolean existsByUsername(String username);
+
+        Optional<User> findByUsername(String username);
+
 }
