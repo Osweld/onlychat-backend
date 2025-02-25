@@ -19,7 +19,7 @@ import german.dev.onlychatbackend.auth.dto.SignUpRequestDTO;
 import german.dev.onlychatbackend.auth.dto.SignUpResponseDTO;
 import german.dev.onlychatbackend.auth.dto.TokenResponseDTO;
 import german.dev.onlychatbackend.auth.mapper.AuthUserMapper;
-import german.dev.onlychatbackend.auth.models.AuthUser;
+import german.dev.onlychatbackend.auth.model.AuthUser;
 import german.dev.onlychatbackend.rol.entity.Rol;
 import german.dev.onlychatbackend.rol.enums.RolEnum;
 import german.dev.onlychatbackend.user.entity.User;

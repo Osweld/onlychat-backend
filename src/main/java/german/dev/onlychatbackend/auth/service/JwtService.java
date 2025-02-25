@@ -8,7 +8,8 @@ import java.util.Date;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import german.dev.onlychatbackend.auth.models.AuthUser;
+
+import german.dev.onlychatbackend.auth.model.AuthUser;
 import io.jsonwebtoken.Claims;
 
 

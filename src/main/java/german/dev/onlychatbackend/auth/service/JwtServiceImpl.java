@@ -18,7 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import german.dev.onlychatbackend.auth.mixin.GrantedAuthorityMixin;
-import german.dev.onlychatbackend.auth.models.AuthUser;
+import german.dev.onlychatbackend.auth.model.AuthUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
