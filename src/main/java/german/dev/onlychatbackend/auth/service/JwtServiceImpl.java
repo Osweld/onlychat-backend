@@ -38,8 +38,14 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String create(Authentication auth) throws NoSuchAlgorithmException, JsonProcessingException {
-        AuthUser authUser = (AuthUser) auth.getPrincipal();
-        return generateToken(authUser);
+
+        try {
+            AuthUser authUser = (AuthUser) auth.getPrincipal();
+            return generateToken(authUser);
+        } catch (Exception e) {
+            throw new JwtException("Error creating token", e);
+        }
+
     }
 
     @Override
@@ -91,21 +97,29 @@ public class JwtServiceImpl implements JwtService {
     public Collection<GrantedAuthority> getAuthorities(String token) throws IOException {
         String authorities = (String) getClaims(token).get("authorities");
         return Arrays.asList(new ObjectMapper()
-        .addMixIn(SimpleGrantedAuthority.class, GrantedAuthorityMixin.class)
-        .readValue(authorities.getBytes(), SimpleGrantedAuthority[].class));
+                .addMixIn(SimpleGrantedAuthority.class, GrantedAuthorityMixin.class)
+                .readValue(authorities.getBytes(), SimpleGrantedAuthority[].class));
     }
 
     @Override
     public Boolean requiresAuthentication(String header) {
-    return (header == null || !header.startsWith(TOKEN_PREFIX));
+        return (header == null || !header.startsWith(TOKEN_PREFIX));
     }
 
     private String generateToken(AuthUser authUser) throws JsonProcessingException {
-        Collection<GrantedAuthority> authorities = authUser.getAuthorities();
 
-        Map<String, String> claims = new HashMap<>();
-        claims.put("authorities", new ObjectMapper().writeValueAsString(authorities));
+        try{
+            Collection<GrantedAuthority> authorities = authUser.getAuthorities();
+            Map<String, String> claims = new HashMap<>();
+            claims.put("authorities", new ObjectMapper().writeValueAsString(authorities));
+            return buildToken(authUser, claims);
+        }catch (Exception e){
+            throw new JwtException("Error generating token", e);
+        }
+        
+    }
 
+    private String buildToken(AuthUser authUser, Map<String, String> claims) {
         return Jwts.builder()
                 .claims(claims)
                 .id(authUser.getId().toString())
