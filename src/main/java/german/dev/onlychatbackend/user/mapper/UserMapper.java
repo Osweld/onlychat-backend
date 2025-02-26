@@ -12,6 +12,11 @@ import german.dev.onlychatbackend.user.dto.UserUpdateDTO;
 public class UserMapper {
     
     public User toEntity(UserRequestDTO dto) {
+
+        if(dto == null) {
+            return null;
+        }
+
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
@@ -20,7 +25,13 @@ public class UserMapper {
     }
 
     public void updateEntity(User user, UserUpdateDTO dto) {
-        user.setEmail(dto.getEmail());
+        if(user == null || dto == null) {
+            throw new IllegalArgumentException("User or UserUpdate cannot be null");
+        }
+
+        if(dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
     }
 
     public UserResponseDTO toDto(User user) {
