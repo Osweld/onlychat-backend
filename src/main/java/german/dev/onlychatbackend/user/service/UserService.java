@@ -3,7 +3,6 @@ package german.dev.onlychatbackend.user.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import german.dev.onlychatbackend.user.dto.UserRequestDTO;
 import german.dev.onlychatbackend.user.dto.UserResponseDTO;
 import german.dev.onlychatbackend.user.dto.UserUpdateDTO;
 import german.dev.onlychatbackend.user.projection.UserProjection;
