@@ -10,7 +10,7 @@ import german.dev.onlychatbackend.auth.dto.LoginResponseDTO;
 import german.dev.onlychatbackend.auth.dto.SignUpRequestDTO;
 import german.dev.onlychatbackend.auth.dto.SignUpResponseDTO;
 import german.dev.onlychatbackend.auth.dto.TokenResponseDTO;
-import german.dev.onlychatbackend.auth.models.AuthUser;
+import german.dev.onlychatbackend.auth.model.AuthUser;
 import german.dev.onlychatbackend.auth.service.AuthUserService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.annotation.security.PermitAll;

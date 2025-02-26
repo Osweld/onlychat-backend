@@ -1,4 +1,4 @@
-package german.dev.onlychatbackend.auth.models;
+package german.dev.onlychatbackend.auth.model;
 
 import java.util.Collection;
 

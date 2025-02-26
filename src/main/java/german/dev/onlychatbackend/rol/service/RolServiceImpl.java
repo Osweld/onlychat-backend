@@ -1,6 +1,7 @@
 package german.dev.onlychatbackend.rol.service;
 
 import german.dev.onlychatbackend.rol.entity.Rol;
+import german.dev.onlychatbackend.rol.exception.RolNotFoundException;
 import german.dev.onlychatbackend.rol.repository.RolRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,11 @@ public class RolServiceImpl implements RolService {
     @Override
     @Transactional(readOnly = true)
     public List<Rol> findAll() {
-        return rolRepository.findAll();
+        try{
+            return rolRepository.findAll();
+        }catch (Exception e){
+            throw new RolNotFoundException("Error while fetching roles");
+        }
+        
     }
 }

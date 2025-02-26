@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import german.dev.onlychatbackend.auth.models.AuthUser;
+import german.dev.onlychatbackend.auth.model.AuthUser;
 import german.dev.onlychatbackend.user.entity.User;
 import german.dev.onlychatbackend.user.enums.UserStatusEnum;
 import german.dev.onlychatbackend.user.repository.UserRepository;

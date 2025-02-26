@@ -10,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import german.dev.onlychatbackend.auth.models.AuthUser;
+import german.dev.onlychatbackend.auth.model.AuthUser;
 import german.dev.onlychatbackend.auth.service.JwtService;
 import german.dev.onlychatbackend.auth.service.JwtServiceImpl;
 import jakarta.servlet.FilterChain;
