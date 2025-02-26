@@ -14,7 +14,6 @@ public interface UserService {
     UserProjection findUserbyUsername(String username);
     Page<UserProjection> searchUserByUsername(String username, Pageable pageable);
     Page<UserProjection> findAllUsers(Pageable pageable);
-    UserResponseDTO saveUser(UserRequestDTO userRequestDTO);
     UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO);
     void deleteUser(Long id);
 
