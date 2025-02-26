@@ -1,8 +1,6 @@
 package german.dev.onlychatbackend.common.exception.model;
 
-import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
