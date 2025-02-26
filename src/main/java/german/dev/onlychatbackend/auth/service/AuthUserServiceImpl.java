@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -25,11 +26,16 @@ import german.dev.onlychatbackend.rol.enums.RolEnum;
 import german.dev.onlychatbackend.user.entity.User;
 import german.dev.onlychatbackend.user.entity.UserStatus;
 import german.dev.onlychatbackend.user.enums.UserStatusEnum;
+import german.dev.onlychatbackend.user.exception.UserAlreadyExistsException;
 import german.dev.onlychatbackend.user.repository.UserRepository;
 import io.jsonwebtoken.io.IOException;
 
+
 @Service
 public class AuthUserServiceImpl implements AuthUserService {
+
+    private static final Long USER_ROLE_ID = Long.valueOf(RolEnum.USER.getId());
+    private static final Long INACTIVE_STATUS_ID = Long.valueOf(UserStatusEnum.INACTIVE.getId());
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -47,21 +53,27 @@ public class AuthUserServiceImpl implements AuthUserService {
     }
 
     @Override
+    @Transactional
     public SignUpResponseDTO signUp(SignUpRequestDTO signUpRequestDTO) {
 
         if (Boolean.TRUE.equals(userRepository.existsByUsername(signUpRequestDTO.getUsername()))) {
-            throw new UnsupportedOperationException("Username already exists");
+            throw new UserAlreadyExistsException("Username already exists");
+        }
+
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(signUpRequestDTO.getEmail()))) {
+            throw new UserAlreadyExistsException("Email already exists");
         }
 
         User user = authUserMapper.signUpRequestDTOToUser(signUpRequestDTO);
         user.setPassword(passwordEncoder.encode(signUpRequestDTO.getPassword()));
-        user.setRol(new Rol(Long.valueOf(RolEnum.USER.getId())));
-        user.setUserStatus(new UserStatus(Long.valueOf(UserStatusEnum.INACTIVE.getId())));
+        user.setRol(new Rol(USER_ROLE_ID));
+        user.setUserStatus(new UserStatus(INACTIVE_STATUS_ID));
 
         return authUserMapper.toAuthUserResponseDTO(userRepository.save(user));
     }
 
     @Override
+    @Transactional
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws IOException, JsonProcessingException, NoSuchAlgorithmException {
 
         try {
@@ -84,6 +96,7 @@ public class AuthUserServiceImpl implements AuthUserService {
     }
 
     @Override
+    @Transactional
     public TokenResponseDTO refreshToken(String token, AuthUser authUser) throws JsonProcessingException {
         if (jwtService.validate(token)) {
             String newToken = JwtServiceImpl.TOKEN_PREFIX + jwtService.refreshToken(authUser);
