@@ -20,7 +20,6 @@ import german.dev.onlychatbackend.common.exception.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Configuration
