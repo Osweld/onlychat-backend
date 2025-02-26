@@ -2,11 +2,9 @@ package german.dev.onlychatbackend.user.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import german.dev.onlychatbackend.rol.enums.RolEnum;
 import german.dev.onlychatbackend.user.dto.UserResponseDTO;
 import german.dev.onlychatbackend.user.dto.UserUpdateDTO;
 import german.dev.onlychatbackend.user.entity.User;
@@ -20,23 +18,19 @@ import german.dev.onlychatbackend.user.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Long USER_ROLE_ID = Long.valueOf(RolEnum.USER.getId());
-    private static final Long INACTIVE_STATUS_ID = Long.valueOf(UserStatusEnum.INACTIVE.getId());
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    private static final String USER_NOT_FOUND_WITH_ID = "User not found with id: ";
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserProjection findUserById(Long id) {
-        return userRepository.findUserById(id).orElseThrow( () -> new UserNotFoundException("User not found with id: " + id));
+        return userRepository.findUserById(id).orElseThrow( () -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + id));
     }
 
     @Override
@@ -70,17 +64,15 @@ public class UserServiceImpl implements UserService {
    
 
     @Override
-    @Transactional
     public UserResponseDTO updateUser(Long id, UserUpdateDTO userUpdateDTO) {
-        User userToUpdate = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        User userToUpdate = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + id));
         userMapper.updateEntity(userToUpdate, userUpdateDTO);
         return userMapper.toDto(userRepository.save(userToUpdate));
     }
 
     @Override
-    @Transactional
     public void deleteUser(Long id) {
-        User userToDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+        User userToDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_WITH_ID + id));
         userToDelete.setUserStatus(new UserStatus(Long.valueOf(UserStatusEnum.DELETED.getId())));
         userRepository.save(userToDelete);
     }
