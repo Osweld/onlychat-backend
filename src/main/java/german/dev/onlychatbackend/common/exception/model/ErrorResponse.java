@@ -20,6 +20,6 @@ public class ErrorResponse {
     private String path;
 
     @Builder.Default
-    private Map<String,String> details = new HashMap<>();
+    private Map<String,Object> details = new HashMap<>();
 
 }
