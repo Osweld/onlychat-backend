@@ -1,6 +1,7 @@
 package german.dev.onlychatbackend.common.exception;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -111,7 +112,7 @@ public class ControllerExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
             .status(HttpStatus.BAD_REQUEST.value())
             .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .message(ex.getMessage())
+            .message("Malformed JSON request")
             .path(request.getDescription(false))
             .build();
         
@@ -133,7 +134,24 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
-   
+    @ExceptionHandler(AccountNotActivatedException.class)
+    public ResponseEntity<ErrorResponse> handleAccountNotActivatedException(
+            AccountNotActivatedException ex, WebRequest request) {
+        
+        Map<String, Object> details = new HashMap<>();
+        details.put("resend", true);
+        details.put("message", ex.getMessage());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.FORBIDDEN.value())
+            .error("Account Not Activated")
+            .message(ex.getMessage())
+            .path(request.getDescription(false))
+            .details(details)
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
 
     
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -214,7 +232,7 @@ public class ControllerExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.builder()
             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-            .message(ex.getMessage())
+            .message(ex.getLocalizedMessage())
             .path(request.getDescription(false))
             .build();
         
