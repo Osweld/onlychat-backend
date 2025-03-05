@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class SignUpRequestDTO {
     
-@NotBlank(message = "The username is required")
+    @NotBlank(message = "The username is required")
     @Size(min=5, max = 20, message = "The username must be between 5 and 20 characters")
     private String username;
 
