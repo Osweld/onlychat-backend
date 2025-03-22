@@ -56,6 +56,20 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
     }
 
+    @ExceptionHandler(ChatException.class)
+    public ResponseEntity<ErrorResponse> handleChatException(ChatException ex, WebRequest request) {
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+            .message(ex.getMessage())
+            .path(request.getDescription(false))
+            .build();
+        
+        
+        return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+    }
+
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex, WebRequest request) {
@@ -152,6 +166,8 @@ public class ControllerExceptionHandler {
         
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
+
+
 
     
     @ExceptionHandler(DataIntegrityViolationException.class)
