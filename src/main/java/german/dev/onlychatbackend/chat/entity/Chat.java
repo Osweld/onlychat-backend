@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -39,9 +41,18 @@ public class Chat {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @NotNull(message = "Chat type is required")
+    @ManyToOne
+    @JoinColumn(name = "id_chat_type", nullable = false)
+    private ChatType chatType;
+
     @PrePersist
     protected void prePersist() {
         createdAt = LocalDateTime.now();
+    }
+
+    public Chat(Long id) {
+        this.id = id;
     }
 
 }
