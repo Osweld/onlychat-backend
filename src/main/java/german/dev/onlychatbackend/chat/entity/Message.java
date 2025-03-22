@@ -33,7 +33,6 @@ public class Message {
     @Column(name = "id_message")
     private Long id;
 
-
     @NotBlank(message = "Message is required")
     @Size(min = 1, max = 255, message = "The message must be between 1 and 255 characters")
     @Column(name = "message", nullable = false, length = 255)
