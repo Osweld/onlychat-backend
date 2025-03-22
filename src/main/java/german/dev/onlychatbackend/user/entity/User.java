@@ -58,4 +58,8 @@ public class User {
         createdAt = LocalDateTime.now();
     }
 
+    public User(Long id) {
+        this.id = id;
+    }
+
 }
