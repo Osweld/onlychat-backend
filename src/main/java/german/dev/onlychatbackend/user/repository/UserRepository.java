@@ -1,5 +1,6 @@
 package german.dev.onlychatbackend.user.repository;
 
+import german.dev.onlychatbackend.chat.projection.UserSearchProjection;
 import german.dev.onlychatbackend.user.entity.User;
 import german.dev.onlychatbackend.user.projection.UserProjection;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
                         " us.name as userStatus" +
                         " FROM User u JOIN u.rol r JOIN u.userStatus us WHERE LOWER(u.username) LIKE LOWER(CONCAT('%',:username,'%'))")
         Page<UserProjection> searchUserByUsername(String username, Pageable pageable);
+
+        @Query("SELECT " +
+                        "u.id as id," +
+                        " u.username as username" +
+                        " FROM User u JOIN u.rol r JOIN u.userStatus us WHERE LOWER(u.username) LIKE LOWER(CONCAT('%',:username,'%')) AND us.name = 'ACTIVE'")
+        Page<UserSearchProjection> searchActiveUserByUsername(String username, Pageable pageable);
 
         @Query("SELECT " +
                         "u.id as id," +
