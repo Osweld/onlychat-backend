@@ -2,7 +2,7 @@ package german.dev.onlychatbackend.chat.enums;
 
 public enum ChatTypeEnum {
     PERSONAL(1, "PERSONAL"),
-    GROUP(2, "GRUUP");
+    GROUP(2, "GROUP");
 
     private final int id;
     private final String type;
