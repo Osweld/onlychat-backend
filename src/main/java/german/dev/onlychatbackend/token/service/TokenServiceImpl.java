@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import german.dev.onlychatbackend.common.exception.ExpiratedTokenException;
 import german.dev.onlychatbackend.token.TokenTypeEnum;
 import german.dev.onlychatbackend.token.entity.Token;
 import german.dev.onlychatbackend.token.entity.TokenType;
@@ -50,7 +51,7 @@ public class TokenServiceImpl implements TokenService {
                         () -> new ValidateTokenException(TOKEN_NOT_FOUND)),
                 ACTIVATE_ACCOUNT_TOKEN_TYPE_ID);
 
-        disabledToken(token);
+        tokenRepository.disableAllTokensForUser(token.getUser().getId(), ACTIVATE_ACCOUNT_TOKEN_TYPE_ID);
 
         return token.getUser();
 
@@ -94,12 +95,8 @@ public class TokenServiceImpl implements TokenService {
     @Override
     @Transactional
     public String resendActivateAccountToken(User user) {
-        Token token = tokenRepository
-                .findByUserAndTokenTypeAndIsUsedFalse(user, new TokenType(ACTIVATE_ACCOUNT_TOKEN_TYPE_ID))
-                .orElseThrow(() -> new ValidateTokenException(TOKEN_NOT_FOUND));
-
-        disabledToken(token);
-        token = generateToken(token.getUser(), ACTIVATE_ACCOUNT_TOKEN_TYPE_ID);
+        tokenRepository.disableAllTokensForUser(user.getId(), ACTIVATE_ACCOUNT_TOKEN_TYPE_ID);
+        Token token = generateToken(user, ACTIVATE_ACCOUNT_TOKEN_TYPE_ID);
         token.setExpiresAt(LocalDateTime.now().plusDays(15));
         tokenRepository.save(token);
 
@@ -116,13 +113,8 @@ public class TokenServiceImpl implements TokenService {
             throw new ValidateTokenException("Token already used");
         }
 
-        if (token.getExpiresAt() == null) {
-            throw new ValidateTokenException("Token invalid");
-        }
-
         if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
-            disabledToken(token);
-
+            throw new ExpiratedTokenException("Token has expired");
         }
         return token;
     }
