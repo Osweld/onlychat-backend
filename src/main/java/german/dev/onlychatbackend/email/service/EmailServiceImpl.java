@@ -32,7 +32,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             Context context = new Context();
             context.setVariable("name", user.getUsername());
-            context.setVariable("activationUrl", frontendUrl + "/activate-account?token=" + token);
+            context.setVariable("activationUrl", frontendUrl + "/activate/" + token);
 
             String htmlContent = templateEngine.process("email/activate-account", context);
 
