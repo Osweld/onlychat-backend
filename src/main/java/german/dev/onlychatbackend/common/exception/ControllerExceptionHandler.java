@@ -167,6 +167,25 @@ public class ControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
+    @ExceptionHandler(ExpiratedTokenException.class)
+    public ResponseEntity<ErrorResponse> handleExpiratedTokenException(
+            ExpiratedTokenException ex, WebRequest request) {
+        
+        Map<String, Object> details = new HashMap<>();
+        details.put("resend", true);
+        details.put("message", ex.getMessage());
+        
+        ErrorResponse errorResponse = ErrorResponse.builder()
+            .status(HttpStatus.UNAUTHORIZED.value())
+            .error("Expired Token")
+            .message(ex.getMessage())
+            .path(request.getDescription(false))
+            .details(details)
+            .build();
+        
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+    }
+
 
 
     
