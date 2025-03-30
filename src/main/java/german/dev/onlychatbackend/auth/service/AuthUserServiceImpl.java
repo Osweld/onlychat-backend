@@ -28,7 +28,9 @@ import german.dev.onlychatbackend.auth.dto.SignUpResponseDTO;
 import german.dev.onlychatbackend.auth.dto.TokenResponseDTO;
 import german.dev.onlychatbackend.auth.mapper.AuthUserMapper;
 import german.dev.onlychatbackend.auth.model.AuthUser;
+import german.dev.onlychatbackend.common.exception.AccountAlreadyActivatedException;
 import german.dev.onlychatbackend.common.exception.AccountNotActivatedException;
+import german.dev.onlychatbackend.common.exception.InvalidAccountStateException;
 import german.dev.onlychatbackend.email.service.EmailService;
 import german.dev.onlychatbackend.rol.entity.Rol;
 import german.dev.onlychatbackend.rol.enums.RolEnum;
@@ -141,6 +143,13 @@ public class AuthUserServiceImpl implements AuthUserService {
         }
 
         User user = tokenService.activateAccountToken(activateAccountToken);
+
+        if (Objects.equals(user.getUserStatus().getId(), ACTIVE_STATUS_ID)) {
+            throw new AccountAlreadyActivatedException("Account is already activated");
+        } else if (!Objects.equals(user.getUserStatus().getId(), INACTIVE_STATUS_ID)) {
+            throw new InvalidAccountStateException("Cannot send activation token for account in current state");
+        }
+
         user.setUserStatus(new UserStatus(ACTIVE_STATUS_ID));
         return new ActivateAccountResponseDTO(user.getEmail());
     }
@@ -154,7 +163,9 @@ public class AuthUserServiceImpl implements AuthUserService {
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
 
         if (Objects.equals(user.getUserStatus().getId(), ACTIVE_STATUS_ID)) {
-            throw new AccountNotActivatedException("Account already activated");
+            throw new AccountAlreadyActivatedException("Account is already activated");
+        } else if (!Objects.equals(user.getUserStatus().getId(), INACTIVE_STATUS_ID)) {
+            throw new InvalidAccountStateException("Cannot send activation token for account in current state");
         }
 
         String token = tokenService.resendActivateAccountToken(user);
@@ -167,11 +178,11 @@ public class AuthUserServiceImpl implements AuthUserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
 
-        if(Objects.equals(user.getUserStatus().getId(), INACTIVE_STATUS_ID)) {
+        if (Objects.equals(user.getUserStatus().getId(), INACTIVE_STATUS_ID)) {
             throw new AccountNotActivatedException("Account not activated. Please activate your account first.");
         }
 
-        if(!Objects.equals(user.getUserStatus().getId(), ACTIVE_STATUS_ID)) {
+        if (!Objects.equals(user.getUserStatus().getId(), ACTIVE_STATUS_ID)) {
             throw new DisabledException("Account disabled");
         }
 
@@ -182,10 +193,10 @@ public class AuthUserServiceImpl implements AuthUserService {
 
     @Override
     public PasswordResetResponseDTO resetPassword(String token, PasswordResetRequestDTO passwordResetRequest) {
-        if(token == null) {
+        if (token == null) {
             throw new IllegalArgumentException("Token cannot be null");
         }
-        
+
         User user = tokenService.resetPasswordToken(token);
         user.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
         userRepository.save(user);
