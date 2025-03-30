@@ -1,11 +1,16 @@
 package german.dev.onlychatbackend.common.exception;
 
-import org.springframework.security.authentication.DisabledException;
 
-public class ExpiratedTokenException extends DisabledException{
+
+public class ExpiratedTokenException extends RuntimeException {
 
     public ExpiratedTokenException(String message) {
         super(message);
+        
+    }
+    
+    public ExpiratedTokenException(String message, Throwable cause) {
+        super(message, cause);
         
     }
 
