@@ -1,5 +1,6 @@
 package german.dev.onlychatbackend.email.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailServiceImpl implements EmailService {
 
-    // @Value("${app.frontend-url}")
-    private String frontendUrl = "http://localhost:4200";
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;

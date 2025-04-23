@@ -12,7 +12,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     
 
-    @Query("SELECT m.id as id, m.text as text, m.sendAt as sendAt, m.chat.chatName as chat, m.user.username as user FROM Message m WHERE m.chat.id = :chatId")
+    @Query("SELECT m.id as id, m.text as message, m.sendAt as timestamp, m.chat.id as chatId, m.user.username as senderUsername, m.user.id as senderId FROM Message m WHERE m.chat.id = :chatId")
     List<ChatMessageProjection> getMessagesByChatId(Long chatId);
 
 }

@@ -56,6 +56,11 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional
     public CreatePersonalChatResponseDTO createPersonalChat(String username, CreatePersonalChatRequestDTO requestDTO) {
+
+        if (username.equals(requestDTO.getUsername())) {
+            throw new IllegalArgumentException("Cannot create a personal chat with yourself");
+        }
+
         User user = getActiveUserByUsername(username);
         User otherUser = getActiveUserByUsername(requestDTO.getUsername());
 
@@ -69,8 +74,7 @@ public class ChatServiceImpl implements ChatService {
         createChatUser(otherUser, chat);
 
         return chatMapper.toCreatePersonalChatResponseDTO(chat.getId(), chat.getChatName(),
-                chat.getChatType().getName(), user.getUsername(), otherUser.getUsername());
-
+                chat.getChatType().getName(), otherUser.getUsername(), chat.getCreatedAt());
     }
 
     private void createChatUser(User user, Chat chat) {
@@ -83,7 +87,7 @@ public class ChatServiceImpl implements ChatService {
     private String generatePersonalChatname(User user1, User user2) {
         Long smallerId = Math.min(user1.getId(), (user2.getId()));
         Long biggerId = Math.max(user1.getId(), (user2.getId()));
-        return "personal_" + smallerId + " - " + biggerId;
+        return "personal_" + smallerId + "_" + biggerId;
     }
 
     private void validateUserIsActive(User user) {

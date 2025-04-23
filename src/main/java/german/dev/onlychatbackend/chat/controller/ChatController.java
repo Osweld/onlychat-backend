@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import german.dev.onlychatbackend.chat.dto.CreatePersonalChatResponseDTO;
 import german.dev.onlychatbackend.chat.dto.UserChatsResponseDTO;
 import german.dev.onlychatbackend.chat.projection.UserSearchProjection;
 import german.dev.onlychatbackend.chat.service.ChatService;
+import german.dev.onlychatbackend.chat.service.MessageService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -26,27 +28,32 @@ import jakarta.validation.Valid;
 public class ChatController {
 
     private final ChatService chatService;
+    private final MessageService messageService;
 
-    public ChatController(ChatService chatService) {
+    public ChatController(ChatService chatService, MessageService messageService) {
         this.chatService = chatService;
+        this.messageService = messageService;
     }
 
 
     @GetMapping("/user-chats")
-    public ResponseEntity<UserChatsResponseDTO> getUserChats(@AuthenticationPrincipal Principal principal) {
-        AuthUser authUser = (AuthUser) principal;
+    public ResponseEntity<UserChatsResponseDTO> getUserChats(@AuthenticationPrincipal AuthUser authUser) {
         return ResponseEntity.ok(chatService.getUserChats(authUser.getId()));
     }
 
     @PostMapping()
-    public ResponseEntity<CreatePersonalChatResponseDTO> createPersonalChat(@AuthenticationPrincipal Principal principal, @RequestBody @Valid CreatePersonalChatRequestDTO createPersonalChatRequestDTO) {
-        AuthUser authUser = (AuthUser) principal;
+    public ResponseEntity<CreatePersonalChatResponseDTO> createPersonalChat(@AuthenticationPrincipal AuthUser authUser, @RequestBody @Valid CreatePersonalChatRequestDTO createPersonalChatRequestDTO) {
         return ResponseEntity.ok(chatService.createPersonalChat(authUser.getUsername(), createPersonalChatRequestDTO));
     }
 
     @GetMapping("/search-users")
-    public ResponseEntity<Page<UserSearchProjection>> searchUsers(@RequestParam String username, @RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<Page<UserSearchProjection>> searchUsers(@RequestParam String username, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         return ResponseEntity.ok(chatService.searchUsers(username, PageRequest.of(page, size)));
     
+    }
+
+    @GetMapping("/messages/{chatId}")
+    public ResponseEntity<?> getMessagesByChatId(@PathVariable Long chatId, @AuthenticationPrincipal AuthUser authUser) {
+        return ResponseEntity.ok(messageService.getMessagesByChatId(chatId, authUser.getId()));
     }
 }

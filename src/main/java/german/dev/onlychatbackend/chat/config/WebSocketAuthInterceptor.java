@@ -22,7 +22,7 @@ import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Slf4j // Para logging
+@Slf4j
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     private final JwtService jwtService;
@@ -38,32 +38,30 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
         if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
             log.debug("Processing WebSocket CONNECT command");
 
+
             String authHeader = accessor.getFirstNativeHeader(JwtServiceImpl.HEADER_STRING);
             
-            // Caso 1: No hay token o no tiene el formato correcto
             if (authHeader == null || !authHeader.startsWith(JwtServiceImpl.TOKEN_PREFIX)) {
                 log.warn("No valid Bearer token found in WebSocket connection request");
                 throw new MessagingException("Unauthorized: No valid authentication token provided");
             }
             
-            String token = authHeader.substring(7);
+           
             
             try {
-                // Caso 2: Token inválido
-                if (!jwtService.validate(token)) {
+                if (!jwtService.validate(authHeader)) {
                     log.warn("Invalid JWT token in WebSocket connection");
                     throw new MessagingException("Unauthorized: Invalid authentication token");
                 }
                 
-                // Token válido - proceder con la autenticación
-                Long id = jwtService.getId(token);
-                String username = jwtService.getUsername(token);
-                Collection<? extends GrantedAuthority> authorities = jwtService.getAuthorities(token);
+                Long id = jwtService.getId(authHeader);
+                String username = jwtService.getUsername(authHeader);
+                Collection<? extends GrantedAuthority> authorities = jwtService.getAuthorities(authHeader);
                 
                 AuthUser principal = new AuthUser(
                         id,
                         username,
-                        null,
+                         "[PROTECTED]",
                         true, true, true, true,
                         authorities);
                 
@@ -74,7 +72,6 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                 log.info("WebSocket connection authenticated for user: {}", username);
                 
             } catch (JwtException | IOException e) {
-                // Caso 3: Error al procesar el token
                 log.error("JWT token processing error", e);
                 throw new MessagingException("Unauthorized: Error processing authentication token");
             }

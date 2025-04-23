@@ -5,9 +5,10 @@ import java.time.LocalDateTime;
 public interface ChatMessageProjection {
 
     Long getId();
-    String getText();
-    LocalDateTime getSendAt();
-    String getChat();
-    String getUser();
+    Long getChatId();
+    String getMessage();
+    LocalDateTime getTimestamp();
+    Long getSenderId();
+    String getSenderUsername();
 
 }
