@@ -75,7 +75,11 @@ public class SecurityConfig {
                         "/api/v1/auth/reset-password",
                         "/swagger-ui/**",
                         "/bus/v3/api-docs/**",
-                        "/v3/api-docs/**").permitAll()
+                        "/v3/api-docs/**",
+                        "/ws/**",
+                        "/topic/**",
+                        "/app/**",
+                        "/user/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
