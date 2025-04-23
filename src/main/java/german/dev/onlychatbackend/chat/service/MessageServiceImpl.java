@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import german.dev.onlychatbackend.chat.dto.SendMessageDTO;
+import german.dev.onlychatbackend.chat.entity.Message;
 import german.dev.onlychatbackend.chat.exception.MessageNotFoundException;
 import german.dev.onlychatbackend.chat.mapper.MessageMapper;
 import german.dev.onlychatbackend.chat.projection.ChatMessageProjection;
@@ -37,9 +38,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public void sendMessage(SendMessageDTO message,Long userId) {
+    public Message sendMessage(SendMessageDTO message, Long userId) {
         if (chatUserRepository.existsByChatIdAndUserId(message.getChatId(), userId)) {
-            messageRepository.save(messageMapper.toEntity(message, userId));
+            return messageRepository.save(messageMapper.toEntity(message, userId));
+
         } else {
             throw new MessageNotFoundException("User is not part of the chat");
         }
