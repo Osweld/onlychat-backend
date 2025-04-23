@@ -107,9 +107,9 @@ public class AuthUserServiceImpl implements AuthUserService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             AuthUser authUser = (AuthUser) authentication.getPrincipal();
-            String token = JwtServiceImpl.TOKEN_PREFIX + jwtService.create(authentication);
+            String token = jwtService.create(authentication);
 
-            return authUserMapper.toLoginResponseDTO(authUser, token, jwtService.getExpiration(token));
+            return authUserMapper.toLoginResponseDTO(authUser, token, jwtService.getExpiration( JwtServiceImpl.TOKEN_PREFIX + token));
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid username or password");
         } catch (DisabledException e) {
