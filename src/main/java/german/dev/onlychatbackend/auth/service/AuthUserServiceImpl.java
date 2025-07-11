@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import german.dev.onlychatbackend.auth.dto.ActivateAccountResponseDTO;
+import german.dev.onlychatbackend.auth.dto.ChangePasswordRequestDTO;
+import german.dev.onlychatbackend.auth.dto.ChangePasswordResponseDTO;
 import german.dev.onlychatbackend.auth.dto.LoginRequestDTO;
 import german.dev.onlychatbackend.auth.dto.LoginResponseDTO;
 import german.dev.onlychatbackend.auth.dto.PasswordResetRequestDTO;
@@ -109,7 +111,8 @@ public class AuthUserServiceImpl implements AuthUserService {
             AuthUser authUser = (AuthUser) authentication.getPrincipal();
             String token = jwtService.create(authentication);
 
-            return authUserMapper.toLoginResponseDTO(authUser, token, jwtService.getExpiration( JwtServiceImpl.TOKEN_PREFIX + token));
+            return authUserMapper.toLoginResponseDTO(authUser, token,
+                    jwtService.getExpiration(JwtServiceImpl.TOKEN_PREFIX + token));
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid username or password");
         } catch (DisabledException e) {
@@ -201,6 +204,22 @@ public class AuthUserServiceImpl implements AuthUserService {
         user.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
         userRepository.save(user);
         return new PasswordResetResponseDTO(user.getEmail());
+    }
+
+    @Override
+    public ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO,
+            AuthUser authUser) {
+
+        User user = userRepository.findById(authUser.getId())
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
+
+        if (passwordEncoder.matches(changePasswordRequestDTO.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(changePasswordRequestDTO.getNewPassword()));
+            userRepository.save(user);
+            return authUserMapper.toChangePasswordResponseDTO(user);
+        } else {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
     }
 
 }

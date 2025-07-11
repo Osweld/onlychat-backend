@@ -46,6 +46,10 @@ public class Message {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
+    @NotNull(message = "Is read status is required")
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead;
+
     @NotNull(message = "The chat is required")
     @ManyToOne
     @JoinColumn(name = "id_chat", nullable = false)
@@ -61,6 +65,7 @@ public class Message {
     protected void prePersist() {
         sendAt = LocalDateTime.now();
         isDeleted = false;
+        isRead = false;
     }
 
 }

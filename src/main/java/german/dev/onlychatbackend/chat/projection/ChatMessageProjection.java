@@ -9,6 +9,7 @@ public interface ChatMessageProjection {
     String getMessage();
     LocalDateTime getTimestamp();
     Long getSenderId();
+    Boolean getIsRead();
     String getSenderUsername();
 
 }

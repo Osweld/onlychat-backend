@@ -12,8 +12,11 @@ import german.dev.onlychatbackend.chat.dto.ChatMessageResponseDTO;
 import german.dev.onlychatbackend.chat.dto.SendMessageDTO;
 import german.dev.onlychatbackend.chat.entity.Message;
 import german.dev.onlychatbackend.chat.service.MessageService;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 public class WebSocketChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -25,7 +28,7 @@ public class WebSocketChatController {
     }
 
     @MessageMapping("/chat.sendMessage")
-    public void sendMessage(@Payload SendMessageDTO messageDTO, SimpMessageHeaderAccessor headerAccessor) {
+    public void sendMessage(@Payload @Valid SendMessageDTO messageDTO, SimpMessageHeaderAccessor headerAccessor) {
 
         Authentication authentication = (Authentication) headerAccessor.getUser();
 
@@ -57,11 +60,23 @@ public class WebSocketChatController {
                     "/topic/chat." + messageDTO.getChatId(),
                     responseDTO);
 
+              messagingTemplate.convertAndSendToUser(
+                    messageDTO.getRecipientUsername(),
+                    "queue/messages",
+                    responseDTO);
+log.info("Message sent to user: {}", messageDTO.getRecipientUsername());
+
+            messagingTemplate.convertAndSendToUser(
+                    authUser.getUsername(),
+                    "queue/messages",
+                    responseDTO);
+
         } catch (Exception e) {
             messagingTemplate.convertAndSendToUser(
                     authUser.getUsername(),
-                    "/queue/errors",
+                    "queue/errors",
                     "Send error : " + e.getMessage());
+            log.error("Error sending message", e);
         }
     }
 }
