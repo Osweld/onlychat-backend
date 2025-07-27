@@ -10,4 +10,5 @@ public interface ChatInfoProjection {
     String getOtherUsername();
     String getLastMessage();
     LocalDateTime getLastMessageDate();
+    Integer getUnreadCount();
 }

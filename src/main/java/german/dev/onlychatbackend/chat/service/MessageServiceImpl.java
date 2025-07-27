@@ -68,10 +68,10 @@ public class MessageServiceImpl implements MessageService {
 
     private void notificationToUser(Long userId, Long chatId) {
 
-        List<Long> userIds = chatUserRepository.findOtherUserIdsInChat(chatId, userId);
-        for (Long id : userIds) {
+        List<String> usernames = chatUserRepository.findOtherUserUsernamesInChat(chatId, userId);
+        for (String username : usernames) {
              messagingTemplate.convertAndSendToUser(
-                    id.toString(),
+                    username,
                     "/queue/message-seen",
                     new MessageSeenNotificationDTO(chatId, userId)
                 );

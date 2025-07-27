@@ -22,7 +22,11 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, ChatUserId> 
                ORDER BY otherCu.id ASC FETCH FIRST 1 ROWS ONLY) as otherUsername,
               m.text as lastMessage, 
               m.sendAt as lastMessageDate,
-              m.isRead as isRead
+              (SELECT CAST(COUNT(unreadMsg) AS int) FROM Message unreadMsg 
+               WHERE unreadMsg.chat.id = ch.id 
+               AND unreadMsg.user.id != :userId 
+               AND unreadMsg.isRead = false 
+               AND unreadMsg.isDeleted = false) as unreadCount
        FROM ChatUser cu
        JOIN cu.chat ch
        JOIN ch.chatType ct
@@ -38,9 +42,9 @@ public interface ChatUserRepository extends JpaRepository<ChatUser, ChatUserId> 
 
 
     @Query("""
-       SELECT cu.user.id
+       SELECT cu.user.username
        FROM ChatUser cu
        WHERE cu.chat.id = :chatId AND cu.user.id != :userId
        """)
-    List<Long> findOtherUserIdsInChat(Long chatId, Long userId);
+    List<String> findOtherUserUsernamesInChat(Long chatId, Long userId);
 }
