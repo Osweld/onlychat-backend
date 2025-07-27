@@ -1,8 +1,9 @@
 package german.dev.onlychatbackend.chat.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import german.dev.onlychatbackend.chat.entity.Message;
@@ -10,9 +11,11 @@ import german.dev.onlychatbackend.chat.projection.ChatMessageProjection;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    
+    @Query("SELECT m.id as id, m.text as message, m.sendAt as timestamp, m.chat.id as chatId, m.user.username as senderUsername, m.user.id as senderId, m.isRead as isRead FROM Message m WHERE m.chat.id = :chatId ORDER BY m.sendAt DESC")
+    Page<ChatMessageProjection> getMessagesByChatId(Long chatId, Pageable pageable);
 
-    @Query("SELECT m.id as id, m.text as message, m.sendAt as timestamp, m.chat.id as chatId, m.user.username as senderUsername, m.user.id as senderId FROM Message m WHERE m.chat.id = :chatId")
-    List<ChatMessageProjection> getMessagesByChatId(Long chatId);
+    @Modifying
+    @Query("UPDATE Message m SET m.isRead = true WHERE m.chat.id = :chatId AND m.user.id != :userId AND m.isRead = false")
+    int markMessagesAsRead(Long chatId, Long userId);
 
 }

@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import german.dev.onlychatbackend.auth.dto.ActivateAccountResponseDTO;
+import german.dev.onlychatbackend.auth.dto.ChangePasswordRequestDTO;
+import german.dev.onlychatbackend.auth.dto.ChangePasswordResponseDTO;
 import german.dev.onlychatbackend.auth.dto.LoginRequestDTO;
 import german.dev.onlychatbackend.auth.dto.LoginResponseDTO;
 import german.dev.onlychatbackend.auth.dto.PasswordResetRequestDTO;
@@ -27,6 +29,7 @@ public interface AuthUserService {
     ResendActivateAccountTokenResponseDTO resendActivateAccountToken(ResendActivateAccountTokenRequestDTO resendActivateAccountTokenRequestDTO);
     PasswordResetResponseDTO requestPasswordReset(String email);
     PasswordResetResponseDTO resetPassword(String token, PasswordResetRequestDTO passwordResetRequest);
+    ChangePasswordResponseDTO changePassword(ChangePasswordRequestDTO changePasswordRequestDTO, AuthUser authUser);
 
 
 }

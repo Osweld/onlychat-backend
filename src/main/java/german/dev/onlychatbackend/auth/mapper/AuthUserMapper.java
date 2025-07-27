@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import german.dev.onlychatbackend.auth.dto.ChangePasswordResponseDTO;
 import german.dev.onlychatbackend.auth.dto.LoginResponseDTO;
 import german.dev.onlychatbackend.auth.dto.SignUpRequestDTO;
 import german.dev.onlychatbackend.auth.dto.SignUpResponseDTO;
@@ -40,6 +41,13 @@ public class AuthUserMapper {
         dto.setUsername(user.getUsername());
         dto.setExpirationDate(expirationDate);
         dto.setToken(token);
+        return dto;
+    }
+
+    public ChangePasswordResponseDTO toChangePasswordResponseDTO(User user) {
+        ChangePasswordResponseDTO dto = new ChangePasswordResponseDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
         return dto;
     }
 

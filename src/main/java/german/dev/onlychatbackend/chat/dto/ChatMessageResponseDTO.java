@@ -16,7 +16,8 @@ public class ChatMessageResponseDTO {
     private String message;         
     private LocalDateTime timestamp; 
     private Long senderId;          
-    private String senderUsername;  
+    private String senderUsername;
+    private boolean isRead;
     
     
 }
